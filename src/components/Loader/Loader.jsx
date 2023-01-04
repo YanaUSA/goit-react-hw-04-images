@@ -1,15 +1,19 @@
-import { RevolvingDot } from 'react-loader-spinner';
+import { Oval } from 'react-loader-spinner';
+import { SpinnerContainer } from './Loader.styled';
 
-{
-  /* <RevolvingDot
-  height="100"
-  width="100"
-  radius="6"
-  color="#4fa94d"
-  secondaryColor=""
-  ariaLabel="revolving-dot-loading"
-  wrapperStyle={{}}
-  wrapperClass=""
-  visible={true}
-/>; */
-}
+export const Spinner = () => {
+  return (
+    <SpinnerContainer>
+      <Oval
+        height={150}
+        width={150}
+        color="#3f51b5"
+        visible={true}
+        ariaLabel="oval-loading"
+        secondaryColor="#7380cd"
+        strokeWidth={3}
+        strokeWidthSecondary={3}
+      />
+    </SpinnerContainer>
+  );
+};

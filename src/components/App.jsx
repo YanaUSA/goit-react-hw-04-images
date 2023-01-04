@@ -1,13 +1,19 @@
 import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
     imageName: '',
-    // loading: false,
+    showModal: false,
+  };
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
   handleFormSubmit = imageName => {
@@ -15,18 +21,14 @@ export class App extends Component {
   };
 
   render() {
-    const { imageName, loading } = this.state;
+    const { imageName, showModal } = this.state;
 
-    console.log('imageName in App', imageName);
     return (
       <>
-        <div>
-          {loading && <h1>Loading...</h1>}
-          {imageName && <div>Imageeeeeee</div>}
-        </div>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery searchName={imageName} />
-        <ToastContainer position="top-right" autoClose={3000} theme="dark" />
+        <ImageGallery searchName={imageName} onClick={this.toggleModal} />
+        {showModal && <Modal />}
+        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       </>
     );
   }

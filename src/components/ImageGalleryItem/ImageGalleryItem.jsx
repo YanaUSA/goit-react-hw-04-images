@@ -1,20 +1,25 @@
 import PropTypes from 'prop-types';
-import {GalleryItem, GalleryItemImage} from './ImageGalleryItem.styled'
+import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 
-export const ImageGalleryItem = (data: {id, webformatURL,largeImageURL }) => {
-  return {
+export const ImageGalleryItem = ({
+  webformatURL,
+  largeImageURL,
+  imageAlt,
+  // onClick,
+}) => {
+  return (
     <GalleryItem>
-  <GalleryItemImage src="" alt="" />
-</GalleryItem>
-  }
-}
-
+      <GalleryItemImage src={webformatURL} alt={imageAlt} />
+    </GalleryItem>
+  );
+};
 
 export default ImageGalleryItem;
 
 ImageGalleryItem.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.exact({
-    id: PropTypes.number.isRequired,
-    webformatURL: PropTypes.string.isRequired, largeImageURL: PropTypes.string.isRequired,  
-  })).isRequired
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+  imageAlt: PropTypes.string.isRequired,
+
+  // onClick: PropTypes.func.isRequired,
 };

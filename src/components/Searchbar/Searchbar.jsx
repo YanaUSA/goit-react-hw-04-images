@@ -30,7 +30,7 @@ export class Searchbar extends Component {
     const { imageName } = this.state;
 
     if (imageName.trim() === '') {
-      toast.warn('Please enter search name!');
+      toast.warn('Please enter search word!');
       return;
     }
     onSubmit(imageName);
@@ -40,6 +40,7 @@ export class Searchbar extends Component {
 
   render() {
     const { imageName } = this.state;
+
     return (
       <HeaderSearchbar>
         <SearchForm onSubmit={this.handleSubmit}>

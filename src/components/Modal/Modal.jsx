@@ -1,20 +1,19 @@
 import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { createPortal } from 'react-dom';
+import { Overlay, ModalContainer } from './Modal.styled';
 
-// import * as basicLightbox from 'basiclightbox';
+const modalRoot = document.querySelector('#modal-root');
 
-// const instance = basicLightbox.create(`
-//     <div class="modal">
-//         <p>
-//             Your first lightbox with just a few lines of code.
-//             Yes, it's really that simple.
-//         </p>
-//     </div>
-// `);
-
-// instance.show();
-
-/* <div class="overlay">
-  <div class="modal">
-    <img src="" alt="" />
-  </div>
-</div>; */
+export class Modal extends Component {
+  render() {
+    return createPortal(
+      <Overlay>
+        <ModalContainer>
+          <img src="" alt="" />
+        </ModalContainer>
+      </Overlay>,
+      modalRoot
+    );
+  }
+}
