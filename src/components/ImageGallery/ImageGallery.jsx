@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 
 import { ImageGalleryList, ActionCall } from './ImageGallery.styled';
 import { Spinner } from '../Loader/Loader';
+import { ErrorImage } from '../Images/ErrorImage';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 
 export class ImageGallery extends Component {
   static defaultProps = {
     searchName: PropTypes.string.isRequired,
-    // onClick: PropTypes.func.isRequired,
   };
 
   state = {
@@ -36,28 +36,23 @@ export class ImageGallery extends Component {
 
       setTimeout(() => {
         fetch(`${BASE_URL}?${SearchParams}`)
-          .then(res => {
-            if (res.ok) {
-              return res.json();
-            }
-            return Promise.reject(new Error('An error occurred...'));
-          })
+          .then(res => res.json())
           .then(data => {
             if (!data.hits.length) {
-              return toast.error(
+              toast.error(
                 `Oops, dear! Humanity hasn't invented such a word yet...`
               );
+              return this.setState({ status: 'idle' });
             }
             this.setState({ data: data.hits, status: 'resolved' });
           })
           .catch(error => this.setState({ error, status: 'rejected' }));
-      }, 2000);
+      }, 500);
     }
   }
 
   render() {
-    const { data, error, status } = this.state;
-    // const { onClick } = this.props;
+    const { data, status } = this.state;
 
     if (status === 'idle') {
       return (
@@ -70,7 +65,7 @@ export class ImageGallery extends Component {
     }
 
     if (status === 'rejected') {
-      return <div>{error('An error occurred...')}</div>;
+      return <ErrorImage />;
     }
 
     if (status === 'resolved') {
@@ -82,7 +77,6 @@ export class ImageGallery extends Component {
               webformatURL={webformatURL}
               largeImageURL={largeImageURL}
               imageAlt={tags}
-              // onClick={onClick}
             />
           ))}
         </ImageGalleryList>

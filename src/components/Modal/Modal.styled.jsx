@@ -16,8 +16,11 @@ const Overlay = styled.div`
 const ModalContainer = styled.div`
   max-width: calc(100vw - 48px);
   max-height: calc(100vh - 24px);
+  border-radius: 20px;
+`;
 
+const ModalImage = styled.img`
   border-radius: 3px;
 `;
 
-export { Overlay, ModalContainer };
+export { Overlay, ModalContainer, ModalImage };
