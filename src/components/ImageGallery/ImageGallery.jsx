@@ -24,6 +24,18 @@ export class ImageGallery extends Component {
     const { searchName } = this.props;
     const { pageNumber } = this.state;
 
+    if (prevProps.searchName !== searchName) {
+      this.setState({ status: 'pending', pageNumber: 1 });
+      this.fetchImages(searchName, pageNumber);
+    } else if (prevState.pageNumber !== pageNumber) {
+      this.setState({ status: 'pending' });
+      this.fetchImages(searchName, pageNumber);
+    }
+  }
+
+  fetchImages = () => {
+    const { searchName } = this.props;
+    const { pageNumber } = this.state;
     const BASE_URL = 'https://pixabay.com/api/';
     const SearchParams = new URLSearchParams({
       q: `${searchName}`,
@@ -34,41 +46,19 @@ export class ImageGallery extends Component {
       PER_PAGE: 12,
     });
 
-    if (prevProps.searchName !== searchName) {
-      this.setState({ status: 'pending', pageNumber: 1 });
-
-      setTimeout(() => {
-        fetch(`${BASE_URL}?${SearchParams}`)
-          .then(res => res.json())
-          .then(data => {
-            if (!data.hits.length) {
-              toast.error(
-                `Oops, dear! Humanity hasn't invented such a word yet...`
-              );
-              return this.setState({ status: 'idle' });
-            }
-            this.setState({ data: data.hits, status: 'resolved' });
-          })
-          .catch(error => this.setState({ error, status: 'rejected' }));
-      }, 500);
-    } else if (prevState.pageNumber !== pageNumber) {
-      this.setState({ status: 'pending' });
-      setTimeout(() => {
-        fetch(`${BASE_URL}?${SearchParams}`)
-          .then(res => res.json())
-          .then(data => {
-            if (!data.hits.length) {
-              toast.error(
-                `Oops, dear! Humanity hasn't invented such a word yet...`
-              );
-              return this.setState({ status: 'idle' });
-            }
-            this.setState({ data: data.hits, status: 'resolved' });
-          })
-          .catch(error => this.setState({ error, status: 'rejected' }));
-      }, 500);
-    }
-  }
+    fetch(`${BASE_URL}?${SearchParams}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.hits.length) {
+          toast.error(
+            `Oops, dear! Humanity hasn't invented such a word yet...`
+          );
+          return this.setState({ status: 'idle' });
+        }
+        this.setState({ data: data.hits, status: 'resolved' });
+      })
+      .catch(error => this.setState({ error, status: 'rejected' }));
+  };
 
   loadMore = () => {
     this.setState(prevState => ({
