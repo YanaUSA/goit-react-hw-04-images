@@ -21,7 +21,9 @@ export class Searchbar extends Component {
   };
 
   handleNameChange = evt => {
-    this.setState({ imageName: evt.currentTarget.value.toLowerCase() });
+    this.setState({
+      imageName: evt.currentTarget.value.toLowerCase(),
+    });
   };
 
   handleSubmit = evt => {

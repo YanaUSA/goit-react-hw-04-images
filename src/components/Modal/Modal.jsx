@@ -8,6 +8,8 @@ const modalRoot = document.querySelector('#modal-root');
 export class Modal extends Component {
   static defaultProps = {
     onClose: PropTypes.func.isRequired,
+    largeImageURL: PropTypes.string.isRequired,
+    imageAlt: PropTypes.string.isRequired,
   };
 
   componentDidMount() {

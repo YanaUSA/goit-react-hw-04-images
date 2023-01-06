@@ -1,4 +1,4 @@
-import image from '../Images/404_pages.jpg';
+import image from '../ErrorImage/404_pages.jpg';
 import { ErrorContainer } from './ErrorImage.styled';
 
 export const ErrorImage = () => {
