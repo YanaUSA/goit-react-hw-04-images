@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 import { Modal } from '../Modal/Modal';
+import { PureComponent } from 'react';
 
-export class ImageGalleryItem extends Component {
+export class ImageGalleryItem extends PureComponent {
   static defaultProps = {
     webformatURL: PropTypes.string.isRequired,
     largeImageURL: PropTypes.string.isRequired,

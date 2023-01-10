@@ -13,14 +13,10 @@ export class Modal extends Component {
   };
 
   componentDidMount() {
-    console.log('componentDidMount');
-
     window.addEventListener('keydown', this.handleKeydownEscape);
   }
 
   componentWillUnmount() {
-    console.log('componentWillUnmount');
-
     window.removeEventListener('keydown', this.handleKeydownEscape);
   }
 
@@ -32,8 +28,6 @@ export class Modal extends Component {
   };
 
   handleOverlayClick = evt => {
-    console.log('BD click');
-
     const { onClose } = this.props;
     if (evt.currentTarget === evt.target) {
       onClose();

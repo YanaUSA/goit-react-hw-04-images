@@ -37,7 +37,7 @@ export class Searchbar extends Component {
     }
     onSubmit(imageName);
 
-    this.setState({ imageName: '' });
+    // this.setState({ imageName: '' });
   };
 
   render() {
