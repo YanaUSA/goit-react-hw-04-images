@@ -16,8 +16,8 @@ export class ImageGallery extends Component {
   state = {
     hits: [],
     totalHits: 0,
+    loading: false,
     error: null,
-    status: 'idle',
     pageNumber: 1,
   };
 
@@ -25,22 +25,13 @@ export class ImageGallery extends Component {
     const { searchName } = this.props;
     const { pageNumber } = this.state;
 
-    // console.log('prevProps.searchName:', prevProps.searchName);
-    // console.log('searchName:', searchName);
-
     if (prevProps.searchName !== searchName && prevState.pageNumber > 1) {
-      // console.log('reload');
-
-      this.setState({ hits: [], status: 'pending', pageNumber: 1 });
+      this.setState({ hits: [], loading: true, pageNumber: 1 });
     } else if (prevProps.searchName !== searchName) {
-      // console.log('submit new name');
-
-      this.setState({ hits: [], status: 'pending', pageNumber: 1 });
+      this.setState({ hits: [], loading: true, pageNumber: 1 });
       this.fetchImages();
     } else if (prevState.pageNumber !== pageNumber) {
-      // console.log('load more');
-
-      this.setState({ status: 'pending' });
+      this.setState({ loading: true });
       this.fetchImages();
     }
   }
@@ -58,34 +49,34 @@ export class ImageGallery extends Component {
       per_page: 12,
     });
 
-    fetch(`${BASE_URL}?${SearchParams}`)
-      .then(res => res.json())
-      .then(({ hits, totalHits }) => {
-        if (!hits.length) {
-          toast.error(
-            `Oops, dear! Humanity hasn't invented such a word yet...`
+    setTimeout(() => {
+      fetch(`${BASE_URL}?${SearchParams}`)
+        .then(res => res.json())
+        .then(({ hits, totalHits }) => {
+          if (!hits.length) {
+            toast.error(
+              `Oops, dear! Humanity hasn't invented such a word yet...`
+            );
+            return hits;
+          }
+
+          const fetchedData = hits.map(
+            ({ id, webformatURL, largeImageURL, tags }) => ({
+              id,
+              webformatURL,
+              largeImageURL,
+              tags,
+            })
           );
-          return this.setState({ status: 'idle' });
-        }
 
-        const fetchedData = hits.map(
-          ({ id, webformatURL, largeImageURL, tags }) => ({
-            id,
-            webformatURL,
-            largeImageURL,
-            tags,
-          })
-        );
-
-        this.setState(prevState => ({
-          hits: [...prevState.hits, ...fetchedData],
-          totalHits,
-          status: 'resolved',
-        }));
-
-        // console.log('data in fetch', fetchedData);
-      })
-      .catch(error => this.setState({ error, status: 'rejected' }));
+          this.setState(prevState => ({
+            hits: [...prevState.hits, ...fetchedData],
+            totalHits,
+          }));
+        })
+        .catch(error => this.setState({ error, totalHits: 0 }))
+        .finally(() => this.setState({ loading: false }));
+    }, 1000);
   };
 
   loadMore = () => {
@@ -95,41 +86,30 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { hits, totalHits, status } = this.state;
+    const { hits, totalHits, loading, error } = this.state;
 
-    // console.log('hits:', hits, 'totalHits', totalHits);
-
-    if (status === 'idle') {
-      return (
-        <ActionCall>Please enter a search word to find picture</ActionCall>
-      );
-    }
-
-    if (status === 'pending') {
-      return <Spinner />;
-    }
-
-    if (status === 'rejected') {
-      return <ErrorImage />;
-    }
-
-    if (status === 'resolved') {
-      return (
-        <div>
-          <ImageGalleryList>
-            {hits.map(({ id, webformatURL, largeImageURL, tags }) => (
-              <ImageGalleryItem
-                key={id}
-                webformatURL={webformatURL}
-                largeImageURL={largeImageURL}
-                imageAlt={tags}
-              />
-            ))}
-          </ImageGalleryList>
-          {hits.length < totalHits && <LoadMoreBtn onClick={this.loadMore} />}
-        </div>
-      );
-    }
+    return (
+      <div>
+        {loading && <Spinner />}
+        {!hits.length && (
+          <ActionCall>Please enter a search word to find picture</ActionCall>
+        )}
+        {error && <ErrorImage />}
+        <ImageGalleryList>
+          {hits.map(({ id, webformatURL, largeImageURL, tags }) => (
+            <ImageGalleryItem
+              key={id}
+              webformatURL={webformatURL}
+              largeImageURL={largeImageURL}
+              imageAlt={tags}
+            />
+          ))}
+        </ImageGalleryList>
+        {hits.length > 0 && hits.length < totalHits && (
+          <LoadMoreBtn onClick={this.loadMore} />
+        )}
+      </div>
+    );
   }
 }
 
