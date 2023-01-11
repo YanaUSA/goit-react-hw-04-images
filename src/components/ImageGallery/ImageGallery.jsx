@@ -91,7 +91,7 @@ export class ImageGallery extends Component {
     return (
       <div>
         {loading && <Spinner />}
-        {!hits.length && (
+        {!hits.length && !loading && !error && (
           <ActionCall>Please enter a search word to find picture</ActionCall>
         )}
         {error && <ErrorImage />}
@@ -105,7 +105,7 @@ export class ImageGallery extends Component {
             />
           ))}
         </ImageGalleryList>
-        {hits.length > 0 && hits.length < totalHits && (
+        {hits.length > 0 && hits.length < totalHits && !loading && (
           <LoadMoreBtn onClick={this.loadMore} />
         )}
       </div>

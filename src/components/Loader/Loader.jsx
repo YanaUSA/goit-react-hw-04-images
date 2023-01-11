@@ -5,15 +5,18 @@ export const Spinner = () => {
   return (
     <SpinnerContainer>
       <Oval
-        height={150}
-        width={150}
+        height={250}
+        width={250}
         color="#3f51b5"
         visible={true}
         ariaLabel="oval-loading"
-        secondaryColor="#7380cd"
-        strokeWidth={3}
-        strokeWidthSecondary={3}
+        secondaryColor="#d0da0a"
+        strokeWidth={5}
+        strokeWidthSecondary={8}
       />
     </SpinnerContainer>
   );
 };
+
+// color = '#3f51b5';
+// secondaryColor = '#7380cd';
