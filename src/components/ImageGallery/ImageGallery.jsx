@@ -49,34 +49,32 @@ export class ImageGallery extends Component {
       per_page: 12,
     });
 
-    setTimeout(() => {
-      fetch(`${BASE_URL}?${SearchParams}`)
-        .then(res => res.json())
-        .then(({ hits, totalHits }) => {
-          if (!hits.length) {
-            toast.error(
-              `Oops, dear! Humanity hasn't invented such a word yet...`
-            );
-            return hits;
-          }
-
-          const fetchedData = hits.map(
-            ({ id, webformatURL, largeImageURL, tags }) => ({
-              id,
-              webformatURL,
-              largeImageURL,
-              tags,
-            })
+    fetch(`${BASE_URL}?${SearchParams}`)
+      .then(res => res.json())
+      .then(({ hits, totalHits }) => {
+        if (!hits.length) {
+          toast.error(
+            `Oops, dear! Humanity hasn't invented such a word yet...`
           );
+          return hits;
+        }
 
-          this.setState(prevState => ({
-            hits: [...prevState.hits, ...fetchedData],
-            totalHits,
-          }));
-        })
-        .catch(error => this.setState({ error, totalHits: 0 }))
-        .finally(() => this.setState({ loading: false }));
-    }, 1000);
+        const fetchedData = hits.map(
+          ({ id, webformatURL, largeImageURL, tags }) => ({
+            id,
+            webformatURL,
+            largeImageURL,
+            tags,
+          })
+        );
+
+        this.setState(prevState => ({
+          hits: [...prevState.hits, ...fetchedData],
+          totalHits,
+        }));
+      })
+      .catch(error => this.setState({ error, totalHits: 0 }))
+      .finally(() => this.setState({ loading: false }));
   };
 
   loadMore = () => {
