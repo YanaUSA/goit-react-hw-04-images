@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
@@ -8,37 +8,14 @@ import { ErrorImage } from '../ErrorImage/ErrorImage';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { LoadMoreBtn } from '../Button/Button';
 
-export class ImageGallery extends Component {
-  static defaultProps = {
-    searchName: PropTypes.string.isRequired,
-  };
+export const ImageGallery = ({ searchName }) => {
+  const [hits, setHits] = useState([]);
+  const [totalHits, setTotalHits] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
 
-  state = {
-    hits: [],
-    totalHits: 0,
-    loading: false,
-    error: null,
-    pageNumber: 1,
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { searchName } = this.props;
-    const { pageNumber } = this.state;
-
-    if (prevProps.searchName !== searchName && prevState.pageNumber > 1) {
-      this.setState({ hits: [], loading: true, pageNumber: 1 });
-    } else if (prevProps.searchName !== searchName) {
-      this.setState({ hits: [], loading: true, pageNumber: 1 });
-      this.fetchImages();
-    } else if (prevState.pageNumber !== pageNumber) {
-      this.setState({ loading: true });
-      this.fetchImages();
-    }
-  }
-
-  fetchImages = () => {
-    const { searchName } = this.props;
-    const { pageNumber } = this.state;
+  const fetchImages = () => {
     const BASE_URL = 'https://pixabay.com/api/';
     const SearchParams = new URLSearchParams({
       q: `${searchName}`,
@@ -68,47 +45,59 @@ export class ImageGallery extends Component {
           })
         );
 
-        this.setState(prevState => ({
-          hits: [...prevState.hits, ...fetchedData],
-          totalHits,
-        }));
+        setHits(prevHits => [...prevHits, ...fetchedData]);
+        setTotalHits(totalHits);
       })
-      .catch(error => this.setState({ error, totalHits: 0 }))
-      .finally(() => this.setState({ loading: false }));
+      .catch(error => setError(error), setTotalHits(0))
+      .finally(() => setLoading(false));
   };
 
-  loadMore = () => {
-    this.setState(prevState => ({
-      pageNumber: prevState.pageNumber + 1,
-    }));
+  useEffect(() => {
+    if (searchName !== '') {
+      setHits([]);
+      setLoading(true);
+      setPageNumber(1);
+      fetchImages();
+    }
+  }, [searchName]);
+
+  useEffect(() => {
+    if (pageNumber > 1) {
+      setLoading(true);
+      fetchImages();
+    }
+  }, [pageNumber]);
+
+  const loadMore = () => {
+    setPageNumber(prevPageNumber => prevPageNumber + 1);
   };
 
-  render() {
-    const { hits, totalHits, loading, error } = this.state;
+  return (
+    <div>
+      {loading && <Spinner />}
+      {!hits.length && !loading && !error && (
+        <ActionCall>Please enter a search word to find picture</ActionCall>
+      )}
+      {error && <ErrorImage />}
+      <ImageGalleryList>
+        {hits.map(({ id, webformatURL, largeImageURL, tags }) => (
+          <ImageGalleryItem
+            key={id}
+            webformatURL={webformatURL}
+            largeImageURL={largeImageURL}
+            imageAlt={tags}
+          />
+        ))}
+      </ImageGalleryList>
+      {hits.length > 0 && hits.length < totalHits && !loading && (
+        <LoadMoreBtn onClick={loadMore} />
+      )}
+    </div>
+  );
+};
 
-    return (
-      <div>
-        {loading && <Spinner />}
-        {!hits.length && !loading && !error && (
-          <ActionCall>Please enter a search word to find picture</ActionCall>
-        )}
-        {error && <ErrorImage />}
-        <ImageGalleryList>
-          {hits.map(({ id, webformatURL, largeImageURL, tags }) => (
-            <ImageGalleryItem
-              key={id}
-              webformatURL={webformatURL}
-              largeImageURL={largeImageURL}
-              imageAlt={tags}
-            />
-          ))}
-        </ImageGalleryList>
-        {hits.length > 0 && hits.length < totalHits && !loading && (
-          <LoadMoreBtn onClick={this.loadMore} />
-        )}
-      </div>
-    );
-  }
-}
+ImageGallery.propTypes = {
+  searchName: PropTypes.string.isRequired,
+};
 
 export default ImageGallery;
