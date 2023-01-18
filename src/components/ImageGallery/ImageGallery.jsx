@@ -18,9 +18,10 @@ export const ImageGallery = ({ searchName }) => {
 
   useEffect(() => {
     setHits([]);
-    // setTotalHits(0);
+    setTotalHits(0);
     setPageNumber(1);
-    // setLoading(true);
+    setError(null);
+    setLoading(false);
 
     setsearchQuery(searchName);
   }, [searchName]);
